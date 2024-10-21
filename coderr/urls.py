@@ -22,9 +22,9 @@ from coderr_auth_app.api.views import RegistrationView, LoginView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('api/', include('coderr_app.urls')),
-    path('api/login/', LoginView.as_view()),
-    path('api/registration/', RegistrationView.as_view()),
+    # path('api/', include('coderr_app.api.urls')),
+    path('api/login/', LoginView.as_view(), name='login'),
+    path('api/registration/', RegistrationView.as_view(), name='registration'),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
