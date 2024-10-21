@@ -6,14 +6,17 @@ from rest_framework.permissions import AllowAny
 from .serializers import RegistrationSerializer
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate
+from rest_framework import status
 
 
 class RegistrationView(APIView):
     permission_classes = [AllowAny]
 
     def post(self, request):
+        print('post reg')
         serializer = RegistrationSerializer(data=request.data)
         data = {}
+
         if serializer.is_valid():
             saved_account = serializer.save()
             token, created = Token.objects.get_or_create(user=saved_account)
@@ -22,9 +25,10 @@ class RegistrationView(APIView):
                 'username': saved_account.username,
                 'email': saved_account.email
             }
-        else:
-            data = serializer.errors
-        return Response(data)
+            return Response(data, status=status.HTTP_201_CREATED)
+            
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 class LoginView(ObtainAuthToken):
     permission_classes = [AllowAny]
@@ -35,10 +39,10 @@ class LoginView(ObtainAuthToken):
         try:
             user = User.objects.get(username=username)
         except User.DoesNotExist:
-            return Response({'error': 'Invalid email or password'}, status=400)
+            return Response({'error': ['Falsche Anmeldedaten']}, status=status.HTTP_400_BAD_REQUEST)
         user = authenticate(request=request, username=user.username, password=password)
         if not user:
-            return Response({'error': 'Invalid email or password'}, status=400)
+            return Response({'error': ['Falsche Anmeldedaten']}, status=status.HTTP_400_BAD_REQUEST)
         data = {}
         token, created = Token.objects.get_or_create(user=user)
         data = {
@@ -47,4 +51,4 @@ class LoginView(ObtainAuthToken):
             'email': user.email,
             'user_id': user.id
         }
-        return Response(data)
+        return Response(data, status=status.HTTP_200_OK)
