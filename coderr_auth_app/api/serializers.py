@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from django.contrib.auth.models import User
+from coderr_app.models import UserProfile
 
 
 class RegistrationSerializer(serializers.ModelSerializer):
@@ -36,5 +37,11 @@ class RegistrationSerializer(serializers.ModelSerializer):
         account = User(email=self.validated_data['email'], username=self.validated_data['username'])
         account.set_password(pw)
         account.save()
+
+        UserProfile.objects.create(
+            user=account,
+            email=self.validated_data['email'],
+            type=self.validated_data['type']
+        )
 
         return account
