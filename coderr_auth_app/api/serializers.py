@@ -4,6 +4,12 @@ from django.contrib.auth.models import User
 
 class RegistrationSerializer(serializers.ModelSerializer):
 
+    def validate_unique_username(value):
+        if User.objects.filter(username=value).exists():
+            raise serializers.ValidationError("Dieser Benutzername ist bereits vergeben.")
+        return value
+
+    username = serializers.CharField(validators=[validate_unique_username])
     repeated_password = serializers.CharField(write_only=True)
     type = serializers.CharField(write_only=True)
 
@@ -15,27 +21,15 @@ class RegistrationSerializer(serializers.ModelSerializer):
                 'write_only': True
             }
         }
-        
-    # def validate(self, value):
-    #     print('validate username')
-    #     username_exists = User.objects.filter(username=value.get('username')).exists()
-    #     if username_exists:
-    #         raise serializers.ValidationError({'username': ['Dieser Benutzername ist bereits vergeben.']})
-    #     return value
 
 
     def save(self):
-        print('save method')
         pw = self.validated_data['password']
         repeated_pw = self.validated_data['repeated_password']
-        username_exists = User.objects.filter(username=self.validated_data['username']).exists()
         email_exists = User.objects.filter(email=self.validated_data['email']).exists()
 
         if pw != repeated_pw:
-            raise serializers.ValidationError({'password': ['Das Passwort ist nicht gleich mit dem wiederholten Passwort']})
-        if username_exists:
-            print('if username')
-            raise serializers.ValidationError({'username': ['Dieser Benutzername ist bereits vergeben.']})
+            raise serializers.ValidationError({'password': ['Die Passwörter sind nicht identisch.']})
         if email_exists:
             raise serializers.ValidationError({'email': ['Diese E-Mail-Adresse wird bereits verwendet']})
         
