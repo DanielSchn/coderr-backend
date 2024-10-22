@@ -31,7 +31,7 @@ class RegistrationSerializer(serializers.ModelSerializer):
         if pw != repeated_pw:
             raise serializers.ValidationError({'password': ['Die Passwörter sind nicht identisch.']})
         if email_exists:
-            raise serializers.ValidationError({'email': ['Diese E-Mail-Adresse wird bereits verwendet']})
+            raise serializers.ValidationError({'email': ['Diese E-Mail-Adresse wird bereits verwendet.']})
         
         account = User(email=self.validated_data['email'], username=self.validated_data['username'])
         account.set_password(pw)

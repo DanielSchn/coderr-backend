@@ -38,10 +38,10 @@ class LoginView(ObtainAuthToken):
         try:
             user = User.objects.get(username=username)
         except User.DoesNotExist:
-            return Response({'error': ['Falsche Anmeldedaten']}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'detail': ['Falsche Anmeldedaten']}, status=status.HTTP_400_BAD_REQUEST)
         user = authenticate(request=request, username=user.username, password=password)
         if not user:
-            return Response({'error': ['Falsche Anmeldedaten']}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'detail': ['Falsche Anmeldedaten']}, status=status.HTTP_400_BAD_REQUEST)
         data = {}
         token, created = Token.objects.get_or_create(user=user)
         data = {
