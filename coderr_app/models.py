@@ -17,3 +17,38 @@ class UserProfile(models.Model):
     
     class Meta:
         ordering = ['user__username']
+
+
+class Offers(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='offers')
+    title = models.CharField(max_length=150)
+    image = models.FileField(upload_to='offers/', null=True, blank=True)
+    description = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    min_price = models.DecimalField(max_digits=10, decimal_places=2)
+    min_delivery_time = models.PositiveIntegerField(default=0)
+
+    def __str__(self):
+        return self.title
+    
+    @property
+    def min_price(self):
+        return min(detail.price for detail in self.details.all())
+
+    @property
+    def min_delivery_time(self):
+        return min(detail.delivery_time_in_days for detail in self.details.all())
+
+
+class OfferDetails(models.Model):
+    offer = models.ForeignKey(Offers, on_delete=models.CASCADE, related_name='details')
+    title = models.CharField(max_length=150)
+    revisions = models.IntegerField(default=-1)
+    delivery_time_in_days = models.PositiveIntegerField(default=1)
+    price = models.DecimalField(max_digits=10, decimal_places=2)
+    features = models.JSONField()
+    offer_type = models.CharField(max_length=50)
+
+    def __str__(self):
+        return self.title

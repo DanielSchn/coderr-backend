@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from coderr_app.models import UserProfile
+from coderr_app.models import UserProfile, OfferDetails, Offers
 from django.contrib.auth.models import User
 
 
@@ -41,3 +41,34 @@ class UserProfileSerializer(serializers.ModelSerializer):
             user.save()
 
         return instance
+    
+
+class OfferDetailsSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = OfferDetails
+        fields = ['id', 'url']
+
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        representation['url'] = f'/offerdetails/{instance.id}/'
+        
+        return representation
+    
+
+class OffersSerializer(serializers.ModelSerializer):
+    details = OfferDetailsSerializer(many=True, read_only=True)
+    min_price = serializers.DecimalField(max_digits=10, decimal_places=2, read_only=True)
+    min_delivery_time = serializers.IntegerField(read_only=True)
+    user_details = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Offers
+        fields = ['id', 'user', 'title', 'image', 'description', 'created_at', 'updated_at', 'details', 'min_price', 'min_delivery_time', 'user_details']
+
+    def get_user_details(self, obj):
+        return {
+            'first_name': obj.user.first_name,
+            'last_name': obj.user.last_name,
+            'username': obj.user.username
+        }
