@@ -18,15 +18,14 @@ class UserProfileSerializer(serializers.ModelSerializer):
         ]
         read_only_fields = ['created_at']
 
+
     def to_representation(self, instance):
         representation = super().to_representation(instance)
         
-        file_path = str(instance.file)
-        if file_path.startswith('http://') or file_path.startswith('https://'):
-            representation['file'] = file_path[file_path.index('/media/'):]
-        else:
-            representation['file'] = file_path
-
+        file_url = str(instance.file.url)
+        if '/media/' in file_url:
+            representation['file'] = file_url[file_url.index('media/'):]
+        
         return representation
 
     def update(self, instance, validated_data):
