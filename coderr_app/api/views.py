@@ -6,7 +6,7 @@ from .permissions import IsOwnerOrAdmin
 
 
 class UserProfileDetailView(generics.RetrieveUpdateAPIView):
-    permission_classes = [IsAdminUser]
+    permission_classes = [IsOwnerOrAdmin]
 
     queryset = UserProfile.objects.all()
     serializer_class = UserProfileSerializer
