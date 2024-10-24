@@ -47,7 +47,7 @@ class OfferDetailsSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = OfferDetails
-        fields = ['id', 'url']
+        fields = ['id', 'url', 'title', 'revisions', 'delivery_time_in_days', 'price', 'features', 'offer_type']
 
     def to_representation(self, instance):
         representation = super().to_representation(instance)
@@ -57,14 +57,43 @@ class OfferDetailsSerializer(serializers.ModelSerializer):
     
 
 class OffersSerializer(serializers.ModelSerializer):
-    details = OfferDetailsSerializer(many=True, read_only=True)
+    details = OfferDetailsSerializer(many=True)
     min_price = serializers.DecimalField(max_digits=10, decimal_places=2, read_only=True)
     min_delivery_time = serializers.IntegerField(read_only=True)
     user_details = serializers.SerializerMethodField()
 
     class Meta:
         model = Offers
-        fields = ['id', 'user', 'title', 'image', 'description', 'created_at', 'updated_at', 'details', 'min_price', 'min_delivery_time', 'user_details']
+        fields = ['id', 'user', 'title', 'image', 'description', 'created_at', 'updated_at', 'details', 'min_delivery_time', 'min_price', 'user_details']
+
+    def create(self, validated_data):
+        print('Validated Data', validated_data)
+        details_data = validated_data.pop('details')
+        print('details data', details_data)
+        offer = Offers.objects.create(**validated_data)
+
+        for detail in details_data:
+            print('Processing Detail:', detail)
+            if 'price' not in detail:
+                raise serializers.ValidationError({'details': ['Jedes Detail muss einen Preis haben!']})
+            OfferDetails.objects.create(offer=offer, **detail)
+
+        return offer
+    
+    def update(self, instance, validated_data):
+        details_data = validated_data.pop('details', None)
+        instance.title = validated_data.get('title', instance.title)
+        instance.image = validated_data.get('image', instance.image)
+        instance.description = validated_data.get('description', instance.description)
+        instance.save()
+
+        if details_data:
+            instance.details.all().delete()
+
+            for detail in details_data:
+                OfferDetails.objects.create(offer=instance, **detail)
+
+        return instance
 
     def get_user_details(self, obj):
         return {

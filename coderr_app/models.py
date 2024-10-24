@@ -20,13 +20,13 @@ class UserProfile(models.Model):
 
 
 class Offers(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='offers')
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='offers')
     title = models.CharField(max_length=150)
     image = models.FileField(upload_to='offers/', null=True, blank=True)
     description = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    min_price = models.DecimalField(max_digits=10, decimal_places=2)
+    min_price = models.DecimalField(max_digits=10, decimal_places=2, default=1.00)
     min_delivery_time = models.PositiveIntegerField(default=0)
 
     def __str__(self):
@@ -34,11 +34,13 @@ class Offers(models.Model):
     
     @property
     def min_price(self):
-        return min(detail.price for detail in self.details.all())
+        details = self.details.all()
+        return min((detail.price for detail in details), default=0.00)
 
     @property
     def min_delivery_time(self):
-        return min(detail.delivery_time_in_days for detail in self.details.all())
+        details = self.details.all()
+        return min((detail.delivery_time_in_days for detail in details), default=0)
 
 
 class OfferDetails(models.Model):

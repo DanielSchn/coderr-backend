@@ -49,5 +49,5 @@ class OffersTest(APITestCase):
 
         
     def test_offer_creation(self):
-        print(self.offer.title)
+        print(self.offer)
         self.assertEqual(self.offer.title, 'Testoffer')
