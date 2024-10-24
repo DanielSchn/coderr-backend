@@ -22,9 +22,12 @@ class UserProfileSerializer(serializers.ModelSerializer):
     def to_representation(self, instance):
         representation = super().to_representation(instance)
         
-        file_url = str(instance.file.url)
-        if '/media/' in file_url:
-            representation['file'] = file_url[file_url.index('media/'):]
+        if instance.file:
+            file_url = str(instance.file.url)
+            if '/media/' in file_url:
+                representation['file'] = file_url[file_url.index('media/'):]
+            else:
+                representation['file'] = None
         
         return representation
 
