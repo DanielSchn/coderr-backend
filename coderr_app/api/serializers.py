@@ -75,7 +75,7 @@ class OffersSerializer(serializers.ModelSerializer):
         fields = ['id', 'user', 'title', 'image', 'description', 'created_at', 'updated_at', 'details', 'min_delivery_time', 'min_price', 'user_details', 'max_delivery_time']
 
     def create(self, validated_data):
-        print(validated_data)
+        # print(validated_data)
         details_data = validated_data.pop('details')
         validated_data['user'] = self.context['request'].user
         offer = Offers.objects.create(**validated_data)

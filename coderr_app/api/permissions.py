@@ -16,23 +16,36 @@ class IsOwnerOrAdmin(permissions.BasePermission):
 class IsBusinessUserOrAdmin(permissions.BasePermission):
 
     def has_permission(self, request, view):
+        print(f'Request User: {request.user} {request.user.is_staff}')
         if request.method in permissions.SAFE_METHODS:
             return True
         
         elif request.method in ['POST', 'PUT', 'PATCH', 'DELETE']:
-            user_profile = getattr(request.user, 'user_profile', None)
-            return user_profile and (user_profile.type == 'business' or request.user.is_staff)
+            if request.user.is_staff:
+                return True
+            else: 
+                user_profile = getattr(request.user, 'user_profile', None)
+                if user_profile.type == 'business':
+                    return True
+            
+            return False
         
         return False
     
-    
+
     def has_object_permission(self, request, view, obj):
         if request.method in permissions.SAFE_METHODS:
             return True
         
         elif request.method in ['POST', 'PUT', 'PATCH', 'DELETE']:
-            user_profile = getattr(request.user, 'user_profile', None)
-            return user_profile and (user_profile.type == 'business' or request.user.is_staff)
+            if request.user.is_staff:
+                return True
+            else: 
+                user_profile = getattr(request.user, 'user_profile', None)
+                if user_profile.type == 'business':
+                    return True
+            
+            return False
         
         return False
         
