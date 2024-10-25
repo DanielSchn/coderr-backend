@@ -8,7 +8,11 @@ class UserProfile(models.Model):
     tel = models.CharField(max_length=25)
     description = models.TextField()
     working_hours = models.CharField(max_length=25)
-    type = models.CharField(max_length=25)
+    USER_TYPE_CHOICES = [
+        ('customer', 'Customer'),
+        ('business', 'Business')
+    ]
+    type = models.CharField(max_length=25, choices=USER_TYPE_CHOICES)
     email = models.EmailField()
     created_at = models.DateTimeField(auto_now_add=True)
 
@@ -26,27 +30,9 @@ class Offers(models.Model):
     description = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    # min_price = models.DecimalField(max_digits=10, decimal_places=2, default=1.00)
-    # min_delivery_time = models.PositiveIntegerField(default=0)
 
     def __str__(self):
         return self.title
-    
-    # @property
-    # def min_price(self):
-    #     # details = self.details.all()
-    #     # return min((detail.price for detail in details), default=0.00)
-    #     return self.details.aggregate(models.Min('price'))['price__min']
-
-    # @property
-    # def min_delivery_time(self):
-    #     # details = self.details.all()
-    #     # return min((detail.delivery_time_in_days for detail in details), default=0)
-    #     return self.details.aggregate(models.Min('delivery_time_in_days'))['delivery_time_in_days__min']
-    
-    # @property
-    # def max_delivery_time(self):
-    #     return self.details.aggregate(models.Max('delivery_time_in_days'))['delivery_time_in_days__max']
 
 
 class OfferDetails(models.Model):

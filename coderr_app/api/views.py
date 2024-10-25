@@ -2,7 +2,7 @@ from rest_framework import generics, viewsets, filters
 from coderr_app.models import UserProfile, OfferDetails, Offers
 from .serializers import UserProfileSerializer, OfferDetailsSerializer, OffersSerializer
 from rest_framework.permissions import IsAuthenticated
-from .permissions import IsOwnerOrAdmin
+from .permissions import IsOwnerOrAdmin, IsBusinessUserOrAdmin
 from .paginations import LargeResultsSetPagination
 from django_filters.rest_framework import DjangoFilterBackend, FilterSet, NumberFilter
 from django.db.models import Min, Max, Subquery, OuterRef
@@ -45,7 +45,7 @@ class OfferFilter(django_filters.FilterSet):
     
 
 class OffersViewSet(viewsets.ModelViewSet):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsBusinessUserOrAdmin]
     serializer_class = OffersSerializer
     queryset = Offers.objects.all()
     pagination_class = LargeResultsSetPagination
@@ -55,8 +55,13 @@ class OffersViewSet(viewsets.ModelViewSet):
     ordering = ['created_at']
     search_fields = ['title', 'description']
 
-    def perform_create(self, serializer):
-        serializer.save(user=self.request.user)
+    def get_serializer_context(self):
+        context = super().get_serializer_context()
+        context['request'] = self.request
+        return context
+
+    # def perform_create(self, serializer):
+    #     serializer.save(user=self.request.user)
 
     def get_queryset(self):
         min_price_subquery = OfferDetails.objects.filter(offer=OuterRef('pk')).values('offer').annotate(
