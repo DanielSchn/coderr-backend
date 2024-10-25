@@ -40,7 +40,7 @@ class OfferFilter(django_filters.FilterSet):
         fields = ['max_delivery_time']
 
     def filter_by_max_delivery_time(self, queryset, name, value):
-        return queryset.filter(max_delivery_time=value)
+        return queryset.filter(max_delivery_time__lte=value)
     
     
 
@@ -67,14 +67,10 @@ class OffersViewSet(viewsets.ModelViewSet):
             min_delivery_time=Min('delivery_time_in_days')
         ).values('min_delivery_time')
 
-        max_delivery_time_subquery = OfferDetails.objects.filter(offer=OuterRef('pk')).values('offer').annotate(
-            max_delivery_time=Max('delivery_time_in_days')
-        ).values('max_delivery_time')
-
         return Offers.objects.annotate(
             min_price=Subquery(min_price_subquery),
             min_delivery_time=Subquery(min_delivery_time_subquery),
-            max_delivery_time=Subquery(max_delivery_time_subquery)
+            max_delivery_time=Subquery(min_delivery_time_subquery)
         )
 
 
