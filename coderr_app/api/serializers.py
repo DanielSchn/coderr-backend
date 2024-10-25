@@ -14,13 +14,15 @@ class UserProfileSerializer(serializers.ModelSerializer):
         fields = [
             'user', 'file', 'location', 'tel', 'description',
             'working_hours', 'type', 'email', 'created_at', 'username',
-            'first_name', 'last_name'
+            'first_name', 'last_name', 'pk'
         ]
         read_only_fields = ['created_at']
 
 
     def to_representation(self, instance):
         representation = super().to_representation(instance)
+
+        representation['pk'] = instance.user.id
         
         if instance.file:
             file_url = str(instance.file.url)
@@ -63,11 +65,12 @@ class OffersSerializer(serializers.ModelSerializer):
     details = OfferDetailsSerializer(many=True)
     min_price = serializers.DecimalField(max_digits=10, decimal_places=2, read_only=True)
     min_delivery_time = serializers.IntegerField(read_only=True)
+    max_delivery_time = serializers.IntegerField(read_only=True)
     user_details = serializers.SerializerMethodField()
 
     class Meta:
         model = Offers
-        fields = ['id', 'user', 'title', 'image', 'description', 'created_at', 'updated_at', 'details', 'min_delivery_time', 'min_price', 'user_details']
+        fields = ['id', 'user', 'title', 'image', 'description', 'created_at', 'updated_at', 'details', 'min_delivery_time', 'min_price', 'user_details', 'max_delivery_time']
 
     def create(self, validated_data):
         print('Validated Data', validated_data)
@@ -83,20 +86,20 @@ class OffersSerializer(serializers.ModelSerializer):
 
         return offer
     
-    def update(self, instance, validated_data):
-        details_data = validated_data.pop('details', None)
-        instance.title = validated_data.get('title', instance.title)
-        instance.image = validated_data.get('image', instance.image)
-        instance.description = validated_data.get('description', instance.description)
-        instance.save()
+    # def update(self, instance, validated_data):
+    #     details_data = validated_data.pop('details', None)
+    #     instance.title = validated_data.get('title', instance.title)
+    #     instance.image = validated_data.get('image', instance.image)
+    #     instance.description = validated_data.get('description', instance.description)
+    #     instance.save()
 
-        if details_data:
-            instance.details.all().delete()
+    #     if details_data:
+    #         instance.details.all().delete()
 
-            for detail in details_data:
-                OfferDetails.objects.create(offer=instance, **detail)
+    #         for detail in details_data:
+    #             OfferDetails.objects.create(offer=instance, **detail)
 
-        return instance
+    #     return instance
 
     def get_user_details(self, obj):
         return {

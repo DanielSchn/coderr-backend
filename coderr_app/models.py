@@ -26,21 +26,27 @@ class Offers(models.Model):
     description = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    min_price = models.DecimalField(max_digits=10, decimal_places=2, default=1.00)
-    min_delivery_time = models.PositiveIntegerField(default=0)
+    # min_price = models.DecimalField(max_digits=10, decimal_places=2, default=1.00)
+    # min_delivery_time = models.PositiveIntegerField(default=0)
 
     def __str__(self):
         return self.title
     
-    @property
-    def min_price(self):
-        details = self.details.all()
-        return min((detail.price for detail in details), default=0.00)
+    # @property
+    # def min_price(self):
+    #     # details = self.details.all()
+    #     # return min((detail.price for detail in details), default=0.00)
+    #     return self.details.aggregate(models.Min('price'))['price__min']
 
-    @property
-    def min_delivery_time(self):
-        details = self.details.all()
-        return min((detail.delivery_time_in_days for detail in details), default=0)
+    # @property
+    # def min_delivery_time(self):
+    #     # details = self.details.all()
+    #     # return min((detail.delivery_time_in_days for detail in details), default=0)
+    #     return self.details.aggregate(models.Min('delivery_time_in_days'))['delivery_time_in_days__min']
+    
+    # @property
+    # def max_delivery_time(self):
+    #     return self.details.aggregate(models.Max('delivery_time_in_days'))['delivery_time_in_days__max']
 
 
 class OfferDetails(models.Model):
@@ -50,7 +56,12 @@ class OfferDetails(models.Model):
     delivery_time_in_days = models.PositiveIntegerField(default=1)
     price = models.DecimalField(max_digits=10, decimal_places=2)
     features = models.JSONField()
-    offer_type = models.CharField(max_length=50)
+    OFFER_TYPES = [
+        ('basic', 'Basic'),
+        ('standard', 'Standard'),
+        ('premium', 'Premium')
+    ]
+    offer_type = models.CharField(max_length=50, choices=OFFER_TYPES)
 
     def __str__(self):
         return self.title

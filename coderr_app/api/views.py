@@ -4,8 +4,9 @@ from .serializers import UserProfileSerializer, OfferDetailsSerializer, OffersSe
 from rest_framework.permissions import IsAuthenticated
 from .permissions import IsOwnerOrAdmin
 from .paginations import LargeResultsSetPagination
-from django_filters.rest_framework import DjangoFilterBackend
-from django.db.models import Min
+from django_filters.rest_framework import DjangoFilterBackend, FilterSet, NumberFilter
+from django.db.models import Min, Max, Subquery, OuterRef
+import django_filters
 
 
 class UserProfileDetailView(generics.RetrieveUpdateAPIView):
@@ -30,6 +31,17 @@ class CustomerProfilesViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         return UserProfile.objects.filter(type='customer')
     
+
+class OfferFilter(django_filters.FilterSet):
+    max_delivery_time = django_filters.NumberFilter(method='filter_by_max_delivery_time')
+
+    class Meta:
+        model = Offers
+        fields = ['max_delivery_time']
+
+    def filter_by_max_delivery_time(self, queryset, name, value):
+        return queryset.filter(max_delivery_time=value)
+    
     
 
 class OffersViewSet(viewsets.ModelViewSet):
@@ -38,7 +50,8 @@ class OffersViewSet(viewsets.ModelViewSet):
     queryset = Offers.objects.all()
     pagination_class = LargeResultsSetPagination
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
-    ordering_fields = ['min_price', 'created_at']
+    filterset_class = OfferFilter
+    ordering_fields = ['min_price', 'created_at', 'max_delivery_time']
     ordering = ['created_at']
     search_fields = ['title', 'description']
 
@@ -46,11 +59,23 @@ class OffersViewSet(viewsets.ModelViewSet):
         serializer.save(user=self.request.user)
 
     def get_queryset(self):
-        queryset = super().get_queryset()
-        min_price = self.request.query_params.get('min_price')
-        if min_price:
-            queryset = queryset.filter(min_price__gte=min_price)
-        return queryset
+        min_price_subquery = OfferDetails.objects.filter(offer=OuterRef('pk')).values('offer').annotate(
+            min_price=Min('price')
+        ).values('min_price')
+
+        min_delivery_time_subquery = OfferDetails.objects.filter(offer=OuterRef('pk')).values('offer').annotate(
+            min_delivery_time=Min('delivery_time_in_days')
+        ).values('min_delivery_time')
+
+        max_delivery_time_subquery = OfferDetails.objects.filter(offer=OuterRef('pk')).values('offer').annotate(
+            max_delivery_time=Max('delivery_time_in_days')
+        ).values('max_delivery_time')
+
+        return Offers.objects.annotate(
+            min_price=Subquery(min_price_subquery),
+            min_delivery_time=Subquery(min_delivery_time_subquery),
+            max_delivery_time=Subquery(max_delivery_time_subquery)
+        )
 
 
 class OfferDetailsViewSet(viewsets.ModelViewSet):
