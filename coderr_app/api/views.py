@@ -1,12 +1,13 @@
-from rest_framework import generics, viewsets, filters
-from coderr_app.models import UserProfile, OfferDetails, Offers
-from .serializers import UserProfileSerializer, OfferDetailsSerializer, OffersSerializer
-from rest_framework.permissions import IsAuthenticated
+from rest_framework import generics, viewsets, filters, status
+from coderr_app.models import UserProfile, OfferDetails, Offers, Orders
+from .serializers import UserProfileSerializer, OfferDetailsSerializer, OffersSerializer, OrdersSerializer
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from .permissions import IsOwnerOrAdmin, IsBusinessUserOrAdmin, IsCustomerToReadOnly
 from .paginations import LargeResultsSetPagination
 from django_filters.rest_framework import DjangoFilterBackend, FilterSet, NumberFilter
 from django.db.models import Min, Max, Subquery, OuterRef
 import django_filters
+from rest_framework.response import Response
 
 
 class UserProfileDetailView(generics.RetrieveUpdateAPIView):
@@ -83,3 +84,43 @@ class OfferDetailsViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
     serializer_class = OfferDetailsSerializer
     queryset = OfferDetails.objects.all()
+
+
+class OrdersViewSet(viewsets.ModelViewSet):
+    permission_classes = [AllowAny]
+    serializer_class = OrdersSerializer
+    queryset = Orders.objects.all()
+
+    def perform_create(self, serializer):
+        
+        offer_detail_id = self.request.data.get('offer_detail_id')
+
+        try:
+            offer_detail = OfferDetails.objects.get(id=offer_detail_id)
+            offer = offer_detail.offer
+            customer_user = self.request.user
+            business_user = offer.user
+
+            serializer.save(
+                customer_user=customer_user,
+                business_user=business_user,
+                offer=offer,
+                offer_details=offer_detail,
+                title=offer.title,
+                revisions=offer_detail.revisions,
+                delivery_time_in_days=offer_detail.delivery_time_in_days,
+                price=offer_detail.price,
+                features=offer_detail.features,
+                offer_type=offer_detail.offer_type,
+                status='in_progress'
+            )
+
+        except OfferDetails.DoesNotExist:
+            raise ValueError('Invalid offer_detail_id')
+        
+    def create(self, request, *args, **kwargs):
+        try:
+            return super().create(request, *args, **kwargs)
+        except ValueError as e:
+            return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+        

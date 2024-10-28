@@ -51,3 +51,22 @@ class OfferDetails(models.Model):
 
     def __str__(self):
         return self.title
+    
+
+class Orders(models.Model):
+    customer_user = models.ForeignKey(User, related_name='customer_order', on_delete=models.CASCADE, limit_choices_to={'user_profile__type': 'customer'})
+    business_user = models.ForeignKey(User, related_name='business_order', on_delete=models.CASCADE, limit_choices_to={'user_profile__type': 'business'})
+    offer = models.ForeignKey('Offers', on_delete=models.CASCADE, related_name='orders')
+    offer_details = models.ForeignKey('OfferDetails', on_delete=models.CASCADE, related_name='orders')
+    title = models.CharField(max_length=150)
+    revisions = models.IntegerField()
+    delivery_time_in_days = models.PositiveIntegerField()
+    price = models.DecimalField(max_digits=10, decimal_places=2)
+    features = models.JSONField()
+    offer_type = models.CharField(max_length=50)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    status = models.CharField(max_length=25)
+
+    def __str__(self):
+        return f'Order by {self.customer_user.username} for {self.title}'
