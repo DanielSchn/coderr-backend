@@ -53,11 +53,14 @@ class IsBusinessUserOrAdmin(permissions.BasePermission):
 class IsCustomerToReadOnly(permissions.BasePermission):
 
     def has_permission(self, request, view):
+        if not request.user.is_authenticated:
+            return False
+        
         if request.method in permissions.SAFE_METHODS:
             return True
-        else:
-            user_profile = getattr(request.user, 'user_profile', None)
-            if user_profile.type == 'customer':
-                return False
+        
+        user_profile = getattr(request.user, 'user_profile', None)
+        if user_profile.type == 'customer':
+            return False
             
         return False
