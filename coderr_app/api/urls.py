@@ -14,5 +14,4 @@ router.register(r'offers', OffersViewSet, basename='offers')
 urlpatterns = [
     path('', include(router.urls)),
     path('profile/<int:pk>/', UserProfileDetailView.as_view(), name='profile-detail'),
-    # path('offers/', OffersListCreateView.as_view(), name='offers')
 ]

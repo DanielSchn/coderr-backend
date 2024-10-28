@@ -2,7 +2,7 @@ from rest_framework import generics, viewsets, filters
 from coderr_app.models import UserProfile, OfferDetails, Offers
 from .serializers import UserProfileSerializer, OfferDetailsSerializer, OffersSerializer
 from rest_framework.permissions import IsAuthenticated
-from .permissions import IsOwnerOrAdmin, IsBusinessUserOrAdmin
+from .permissions import IsOwnerOrAdmin, IsBusinessUserOrAdmin, IsCustomerToReadOnly
 from .paginations import LargeResultsSetPagination
 from django_filters.rest_framework import DjangoFilterBackend, FilterSet, NumberFilter
 from django.db.models import Min, Max, Subquery, OuterRef
@@ -10,7 +10,7 @@ import django_filters
 
 
 class UserProfileDetailView(generics.RetrieveUpdateAPIView):
-    permission_classes = [IsOwnerOrAdmin]
+    permission_classes = [IsOwnerOrAdmin | IsCustomerToReadOnly]
 
     queryset = UserProfile.objects.all()
     serializer_class = UserProfileSerializer

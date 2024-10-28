@@ -49,4 +49,15 @@ class IsBusinessUserOrAdmin(permissions.BasePermission):
         
         return False
         
-        
+
+class IsCustomerToReadOnly(permissions.BasePermission):
+
+    def has_permission(self, request, view):
+        if request.method in permissions.SAFE_METHODS:
+            return True
+        else:
+            user_profile = getattr(request.user, 'user_profile', None)
+            if user_profile.type == 'customer':
+                return False
+            
+        return False
