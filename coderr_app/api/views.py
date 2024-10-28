@@ -1,6 +1,6 @@
 from rest_framework import generics, viewsets, filters, status
 from coderr_app.models import UserProfile, OfferDetails, Offers, Orders
-from .serializers import UserProfileSerializer, OfferDetailsSerializer, OffersSerializer, OrdersSerializer
+from .serializers import UserProfileSerializer, OfferDetailsSerializer, OffersSerializer, OrdersSerializer, CustomerUserProfileSerializer, UserProfileDetailSerializer
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from .permissions import IsOwnerOrAdmin, IsBusinessUserOrAdmin, IsCustomerToReadOnly
 from .paginations import LargeResultsSetPagination
@@ -19,7 +19,7 @@ class UserProfileDetailView(generics.RetrieveUpdateAPIView):
     
 class BusinessProfilesViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
-    serializer_class = UserProfileSerializer
+    serializer_class = UserProfileDetailSerializer
 
     def get_queryset(self):
         return UserProfile.objects.filter(type='business')
@@ -27,7 +27,7 @@ class BusinessProfilesViewSet(viewsets.ModelViewSet):
 
 class CustomerProfilesViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
-    serializer_class = UserProfileSerializer
+    serializer_class = UserProfileDetailSerializer
 
     def get_queryset(self):
         return UserProfile.objects.filter(type='customer')
@@ -87,7 +87,7 @@ class OfferDetailsViewSet(viewsets.ModelViewSet):
 
 
 class OrdersViewSet(viewsets.ModelViewSet):
-    permission_classes = [AllowAny]
+    permission_classes = [IsAuthenticated]
     serializer_class = OrdersSerializer
     queryset = Orders.objects.all()
 

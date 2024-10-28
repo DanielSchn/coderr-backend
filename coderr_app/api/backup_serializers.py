@@ -48,61 +48,6 @@ class UserProfileSerializer(serializers.ModelSerializer):
         return instance
     
 
-class UserSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = User
-        fields = ['pk', 'username', 'first_name', 'last_name']
-
-
-class UserProfileDetailSerializer(serializers.ModelSerializer):
-    user = UserSerializer()
-
-    class Meta:
-        model = UserProfile
-        fields = [
-            'user', 'file', 'location', 'tel', 'description',
-            'working_hours', 'type', 'email', 'created_at', 'pk'
-        ]
-        read_only_fields = ['created_at']
-
-    def to_representation(self, instance):
-        representation = super().to_representation(instance)
-        representation['pk'] = instance.user.id
-        
-        if instance.file:
-            file_url = str(instance.file.url)
-            if '/media/' in file_url:
-                representation['file'] = file_url[file_url.index('media/'):]
-            else:
-                representation['file'] = None
-        
-        return representation
-
-class CustomerUserProfileSerializer(serializers.ModelSerializer):
-    user = UserSerializer()
-
-    class Meta:
-        model = UserProfile
-        fields = [
-            'user', 'file', 'location', 'tel', 'description',
-            'working_hours', 'type', 'email', 'created_at', 'pk'
-        ]
-        read_only_fields = ['created_at']
-
-    def to_representation(self, instance):
-        representation = super().to_representation(instance)
-        representation['pk'] = instance.user.id
-        
-        if instance.file:
-            file_url = str(instance.file.url)
-            if '/media/' in file_url:
-                representation['file'] = file_url[file_url.index('media/'):]
-            else:
-                representation['file'] = None
-        
-        return representation
-    
-
 class OfferDetailsSerializer(serializers.ModelSerializer):
 
     class Meta:
