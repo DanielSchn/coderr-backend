@@ -24,8 +24,7 @@ class IsBusinessUserOrAdmin(permissions.BasePermission):
             if request.user.is_staff:
                 return True
             else: 
-                user_profile = getattr(request.user, 'user_profile', None)
-                if user_profile.type == 'business':
+                if request.user.user_profile.type == 'business':
                     return True
             
             return False
@@ -41,8 +40,8 @@ class IsBusinessUserOrAdmin(permissions.BasePermission):
             if request.user.is_staff:
                 return True
             else: 
-                user_profile = getattr(request.user, 'user_profile', None)
-                if user_profile.type == 'business':
+                
+                if request.user.user_profile.type == 'business':
                     return True
             
             return False
@@ -59,8 +58,28 @@ class IsCustomerToReadOnly(permissions.BasePermission):
         if request.method in permissions.SAFE_METHODS:
             return True
         
-        user_profile = getattr(request.user, 'user_profile', None)
-        if user_profile.type == 'customer':
+        if request.user.user_profile.type == 'customer':
             return False
             
+        return False
+    
+
+class CustomOrdersPermission(permissions.BasePermission):
+
+    def has_permission(self, request, view):
+        if not request.user.is_authenticated:
+            return False
+        
+        if request.method in permissions.SAFE_METHODS:
+            return True
+        
+        if request.user.is_staff:
+            return request.method != 'POST'
+        
+        if request.user.user_profile.type == 'customer':
+                return request.method == 'POST'
+        
+        if request.user.user_profile.type == 'business':
+                return request.method == 'PATCH'
+        
         return False

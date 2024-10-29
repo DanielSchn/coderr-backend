@@ -2,7 +2,7 @@ from rest_framework import generics, viewsets, filters, status
 from coderr_app.models import UserProfile, OfferDetails, Offers, Orders
 from .serializers import UserProfileSerializer, OfferDetailsSerializer, OffersSerializer, OrdersSerializer, CustomerUserProfileSerializer, UserProfileDetailSerializer
 from rest_framework.permissions import IsAuthenticated, AllowAny
-from .permissions import IsOwnerOrAdmin, IsBusinessUserOrAdmin, IsCustomerToReadOnly
+from .permissions import IsOwnerOrAdmin, IsBusinessUserOrAdmin, IsCustomerToReadOnly, CustomOrdersPermission
 from .paginations import LargeResultsSetPagination
 from django_filters.rest_framework import DjangoFilterBackend, FilterSet, NumberFilter
 from django.db.models import Min, Max, Subquery, OuterRef
@@ -61,9 +61,6 @@ class OffersViewSet(viewsets.ModelViewSet):
         context['request'] = self.request
         return context
 
-    # def perform_create(self, serializer):
-    #     serializer.save(user=self.request.user)
-
     def get_queryset(self):
         min_price_subquery = OfferDetails.objects.filter(offer=OuterRef('pk')).values('offer').annotate(
             min_price=Min('price')
@@ -87,7 +84,7 @@ class OfferDetailsViewSet(viewsets.ModelViewSet):
 
 
 class OrdersViewSet(viewsets.ModelViewSet):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [CustomOrdersPermission]
     serializer_class = OrdersSerializer
     queryset = Orders.objects.all()
 
