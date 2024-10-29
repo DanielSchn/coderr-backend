@@ -88,7 +88,7 @@ class OrdersTest(APITestCase):
 
     
     def test_patch_order_as_business(self):
-        url_patch = reverse('orders-partial-update', kwargs={'pk': 1})
+        url_patch = reverse('orders-detail', kwargs={'pk': 1})
         url_post = reverse('orders-list')
         data_post = {
             "offer_detail_id": 1
