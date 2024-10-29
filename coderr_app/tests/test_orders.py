@@ -231,3 +231,19 @@ class OrdersTest(APITestCase):
         response_get = self.client.get(url_get)
         self.assertEqual(response_post.status_code, status.HTTP_201_CREATED)
         self.assertEqual(response_get.status_code, status.HTTP_200_OK)
+
+
+    def test_delete_order_as_business(self):
+        url_delete = reverse('orders-detail', kwargs={'pk': 1})
+        url_post = reverse('orders-list')
+        data = {
+            "offer_detail_id": 1
+        }
+
+        self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.customer_token.key)
+        response_post = self.client.post(url_post, data, format='json')
+        self.client.credentials()
+        self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.business_token.key)
+        response_get = self.client.delete(url_delete)
+        self.assertEqual(response_post.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(response_get.status_code, status.HTTP_403_FORBIDDEN)
