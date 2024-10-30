@@ -1,5 +1,5 @@
 from rest_framework import generics, viewsets, filters, status
-from coderr_app.models import UserProfile, OfferDetails, Offers, Orders
+from coderr_app.models import UserProfile, OfferDetails, Offers, Orders, User
 from .serializers import UserProfileSerializer, OfferDetailsSerializer, OffersSerializer, OrdersSerializer, CustomerUserProfileSerializer, UserProfileDetailSerializer
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from .permissions import IsOwnerOrAdmin, IsBusinessUserOrAdmin, IsCustomerToReadOnly, CustomOrdersPermission
@@ -8,6 +8,7 @@ from django_filters.rest_framework import DjangoFilterBackend, FilterSet, Number
 from django.db.models import Min, Max, Subquery, OuterRef
 import django_filters
 from rest_framework.response import Response
+from rest_framework.views import APIView
 
 
 class UserProfileDetailView(generics.RetrieveUpdateAPIView):
@@ -121,3 +122,32 @@ class OrdersViewSet(viewsets.ModelViewSet):
         except ValueError as e:
             return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
         
+
+class InProgressOrderCountView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, business_user_id, *args, **kwargs):
+        if not User.objects.filter(id=business_user_id, user_profile__type='business').exists():
+            return Response({'error': 'Business user not found.'}, status.HTTP_400_BAD_REQUEST)
+
+        in_progress_count = Orders.objects.filter(
+            business_user_id=business_user_id,
+            status='in_progress'
+        ).count()
+
+        return Response({'order_count': in_progress_count})
+    
+
+class CompletedOrderCountView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, business_user_id, *args, **kwargs):
+        if not User.objects.filter(id=business_user_id, user_profile__type='business').exists():
+            return Response({'error': 'Business user not found.'}, status.HTTP_400_BAD_REQUEST)
+
+        completed_count = Orders.objects.filter(
+            business_user_id=business_user_id,
+            status='completed'
+        ).count()
+
+        return Response({'completed_order_count': completed_count})
