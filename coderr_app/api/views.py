@@ -151,3 +151,10 @@ class CompletedOrderCountView(APIView):
         ).count()
 
         return Response({'completed_order_count': completed_count})
+    
+
+class ReviewsViewSet(viewsets.ModelViewSet):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, business_user_id, *args, **kwargs):
+        pass
