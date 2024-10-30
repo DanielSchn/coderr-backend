@@ -1,8 +1,8 @@
 from rest_framework import generics, viewsets, filters, status
-from coderr_app.models import UserProfile, OfferDetails, Offers, Orders, User
-from .serializers import UserProfileSerializer, OfferDetailsSerializer, OffersSerializer, OrdersSerializer, CustomerUserProfileSerializer, UserProfileDetailSerializer
+from coderr_app.models import UserProfile, OfferDetails, Offers, Orders, User, Reviews
+from .serializers import UserProfileSerializer, OfferDetailsSerializer, OffersSerializer, OrdersSerializer, UserProfileDetailSerializer, ReviewsSerializer
 from rest_framework.permissions import IsAuthenticated, AllowAny
-from .permissions import IsOwnerOrAdmin, IsBusinessUserOrAdmin, IsCustomerToReadOnly, CustomOrdersPermission
+from .permissions import IsObjectOwnerOrAdminPermission, IsBusinessOrAdminPermission, IsCustomerReadOnlyPermission, OrderAccessPermission
 from .paginations import LargeResultsSetPagination
 from django_filters.rest_framework import DjangoFilterBackend, FilterSet, NumberFilter
 from django.db.models import Min, Max, Subquery, OuterRef
@@ -12,7 +12,7 @@ from rest_framework.views import APIView
 
 
 class UserProfileDetailView(generics.RetrieveUpdateAPIView):
-    permission_classes = [IsOwnerOrAdmin | IsCustomerToReadOnly]
+    permission_classes = [IsObjectOwnerOrAdminPermission | IsCustomerReadOnlyPermission]
 
     queryset = UserProfile.objects.all()
     serializer_class = UserProfileSerializer
@@ -47,7 +47,7 @@ class OfferFilter(django_filters.FilterSet):
     
 
 class OffersViewSet(viewsets.ModelViewSet):
-    permission_classes = [IsBusinessUserOrAdmin]
+    permission_classes = [IsBusinessOrAdminPermission]
     serializer_class = OffersSerializer
     queryset = Offers.objects.all()
     pagination_class = LargeResultsSetPagination
@@ -85,7 +85,7 @@ class OfferDetailsViewSet(viewsets.ModelViewSet):
 
 
 class OrdersViewSet(viewsets.ModelViewSet):
-    permission_classes = [CustomOrdersPermission]
+    permission_classes = [OrderAccessPermission]
     serializer_class = OrdersSerializer
     queryset = Orders.objects.all()
 
@@ -155,6 +155,11 @@ class CompletedOrderCountView(APIView):
 
 class ReviewsViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
+    serializer_class = ReviewsSerializer
+    queryset = Reviews.objects.all()
+    filter_backends = [DjangoFilterBackend, filters.OrderingFilter]
+    ordering_fields = ['updated_at', 'rating']
+    ordering = ['-updated_at']
 
-    def get(self, request, business_user_id, *args, **kwargs):
-        pass
+    def perform_create(self, serializer):
+        serializer.save(customer_user=self.request.user)

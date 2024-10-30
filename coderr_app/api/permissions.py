@@ -1,6 +1,6 @@
 from rest_framework import permissions
 
-class IsOwnerOrAdmin(permissions.BasePermission):
+class IsObjectOwnerOrAdminPermission(permissions.BasePermission):
 
     def has_object_permission(self, request, view, obj):
         if request.method in permissions.SAFE_METHODS:
@@ -12,7 +12,7 @@ class IsOwnerOrAdmin(permissions.BasePermission):
         return bool(request.user and (request.user == obj.user or request.user.is_staff))
     
 
-class IsBusinessUserOrAdmin(permissions.BasePermission):
+class IsBusinessOrAdminPermission(permissions.BasePermission):
 
     def has_permission(self, request, view):
         if request.method in permissions.SAFE_METHODS:
@@ -47,7 +47,7 @@ class IsBusinessUserOrAdmin(permissions.BasePermission):
         return False
         
 
-class IsCustomerToReadOnly(permissions.BasePermission):
+class IsCustomerReadOnlyPermission(permissions.BasePermission):
 
     def has_permission(self, request, view):
         if not request.user.is_authenticated:
@@ -62,7 +62,7 @@ class IsCustomerToReadOnly(permissions.BasePermission):
         return False
     
 
-class CustomOrdersPermission(permissions.BasePermission):
+class OrderAccessPermission(permissions.BasePermission):
 
     def has_permission(self, request, view):
         if not request.user.is_authenticated:

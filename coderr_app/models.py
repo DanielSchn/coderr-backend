@@ -70,3 +70,15 @@ class Orders(models.Model):
 
     def __str__(self):
         return f'Order by {self.customer_user.username} for {self.title}'
+    
+
+class Reviews(models.Model):
+    customer_user = models.ForeignKey(User, related_name='customer_reviews', on_delete=models.CASCADE, limit_choices_to={'user_profile__type': 'customer'})
+    business_user = models.ForeignKey(User, related_name='business_reviews', on_delete=models.CASCADE, limit_choices_to={'user_profile__type': 'business'})
+    rating = models.IntegerField()
+    description = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f'Review for {self.business_user} by {self.customer_user}'
