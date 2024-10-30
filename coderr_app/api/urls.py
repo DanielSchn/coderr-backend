@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf.urls.static import static
 from django.conf import settings
-from .views import UserProfileDetailView, BusinessProfilesViewSet, CustomerProfilesViewSet, OffersViewSet, OfferDetailsViewSet, OrdersViewSet, InProgressOrderCountView, CompletedOrderCountView
+from .views import UserProfileDetailView, BusinessProfilesViewSet, CustomerProfilesViewSet, OffersViewSet, OfferDetailsViewSet, OrdersViewSet, InProgressOrderCountView, CompletedOrderCountView, ReviewsViewSet
 from rest_framework.routers import DefaultRouter
 
 router = DefaultRouter()
@@ -11,6 +11,7 @@ router.register(r'profiles/customer', CustomerProfilesViewSet, basename='custome
 router.register(r'offerdetails', OfferDetailsViewSet, basename='offerdetails')
 router.register(r'offers', OffersViewSet, basename='offers')
 router.register(r'orders', OrdersViewSet, basename='orders')
+router.register(r'reviews', ReviewsViewSet, basename='reviews')
 
 urlpatterns = [
     path('', include(router.urls)),
