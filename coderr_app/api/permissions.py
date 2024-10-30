@@ -81,3 +81,24 @@ class OrderAccessPermission(permissions.BasePermission):
                 return request.method == 'PATCH'
         
         return False
+    
+
+class IsReviewerOrAdminPermission(permissions.BasePermission):
+
+    def has_permission(self, request, view):
+        if not request.user.is_authenticated:
+            return False
+        
+        if request.method == 'POST':
+            return request.user.user_profile.type == 'customer'
+        
+        if request.method in ['PATCH', 'DELETE']:
+            return True
+        
+        return True
+    
+    def has_object_permission(self, request, view, obj):
+        if request.method in ['PATCH', 'DELETE']:
+            return obj.customer_user == request.user or request.user.is_staff
+        
+        return True

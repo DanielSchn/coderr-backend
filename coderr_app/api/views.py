@@ -2,7 +2,7 @@ from rest_framework import generics, viewsets, filters, status
 from coderr_app.models import UserProfile, OfferDetails, Offers, Orders, User, Reviews
 from .serializers import UserProfileSerializer, OfferDetailsSerializer, OffersSerializer, OrdersSerializer, UserProfileDetailSerializer, ReviewsSerializer
 from rest_framework.permissions import IsAuthenticated, AllowAny
-from .permissions import IsObjectOwnerOrAdminPermission, IsBusinessOrAdminPermission, IsCustomerReadOnlyPermission, OrderAccessPermission
+from .permissions import IsObjectOwnerOrAdminPermission, IsBusinessOrAdminPermission, IsCustomerReadOnlyPermission, OrderAccessPermission, IsReviewerOrAdminPermission
 from .paginations import LargeResultsSetPagination
 from django_filters.rest_framework import DjangoFilterBackend, FilterSet, NumberFilter
 from django.db.models import Min, Max, Subquery, OuterRef
@@ -154,7 +154,7 @@ class CompletedOrderCountView(APIView):
     
 
 class ReviewsViewSet(viewsets.ModelViewSet):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsReviewerOrAdminPermission]
     serializer_class = ReviewsSerializer
     queryset = Reviews.objects.all()
     filter_backends = [DjangoFilterBackend, filters.OrderingFilter]
@@ -163,3 +163,8 @@ class ReviewsViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         serializer.save(customer_user=self.request.user)
+
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        self.perform_destroy(instance)
+        return Response({}, status.HTTP_200_OK)
