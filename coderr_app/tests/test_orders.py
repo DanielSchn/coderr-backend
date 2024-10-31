@@ -2,7 +2,7 @@ from rest_framework.test import APITestCase, APIClient
 from django.contrib.auth.models import User
 from django.urls import reverse
 from rest_framework import status
-from coderr_app.models import UserProfile, Offers, OfferDetails, Orders
+from coderr_app.models import UserProfile, Offers, OfferDetails
 from rest_framework.authtoken.models import Token
 
 
