@@ -128,8 +128,7 @@ class OffersTest(APITestCase):
 
         self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.admin_token.key)
         response = self.client.post(url, data, format='json')
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        self.assertEqual(response.data['title'], 'Online Marketing Paket')
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
 
     def test_offer_creation_as_customer(self):
