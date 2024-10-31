@@ -36,10 +36,11 @@ class CustomerProfilesViewSet(viewsets.ModelViewSet):
 
 class OfferFilter(django_filters.FilterSet):
     max_delivery_time = django_filters.NumberFilter(method='filter_by_max_delivery_time')
+    creator_id = django_filters.NumberFilter(field_name='user__id')
 
     class Meta:
         model = Offers
-        fields = ['max_delivery_time']
+        fields = ['max_delivery_time', 'creator_id']
 
     def filter_by_max_delivery_time(self, queryset, name, value):
         return queryset.filter(max_delivery_time__lte=value)
@@ -88,6 +89,12 @@ class OrdersViewSet(viewsets.ModelViewSet):
     permission_classes = [OrderAccessPermission]
     serializer_class = OrdersSerializer
     queryset = Orders.objects.all()
+
+    def get_queryset(self):
+        user = self.request.user
+        customer_orders = Orders.objects.filter(customer_user=user)
+        business_orders = Orders.objects.filter(business_user=user)
+        return customer_orders | business_orders
 
     def perform_create(self, serializer):
         
@@ -153,11 +160,21 @@ class CompletedOrderCountView(APIView):
         return Response({'completed_order_count': completed_count})
     
 
+class ReviewsFilter(django_filters.FilterSet):
+    business_user_id = django_filters.NumberFilter(field_name='business_user__id')
+    reviewer_id = django_filters.NumberFilter(field_name='customer_user__id')
+
+    class Meta:
+        model = Reviews
+        fields = ['business_user_id', 'reviewer_id']
+
+
 class ReviewsViewSet(viewsets.ModelViewSet):
     permission_classes = [IsReviewerOrAdminPermission]
     serializer_class = ReviewsSerializer
     queryset = Reviews.objects.all()
     filter_backends = [DjangoFilterBackend, filters.OrderingFilter]
+    filterset_class = ReviewsFilter
     ordering_fields = ['updated_at', 'rating']
     ordering = ['-updated_at']
 

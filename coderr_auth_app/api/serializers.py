@@ -7,7 +7,7 @@ class RegistrationSerializer(serializers.ModelSerializer):
 
     def validate_unique_username(value):
         if User.objects.filter(username=value).exists():
-            raise serializers.ValidationError("Dieser Benutzername ist bereits vergeben.")
+            raise serializers.ValidationError('Bitte prüfe deine Eingaben. Email und/oder Benutzername bereits vergeben.')
         return value
 
     username = serializers.CharField(validators=[validate_unique_username])
@@ -32,7 +32,7 @@ class RegistrationSerializer(serializers.ModelSerializer):
         if pw != repeated_pw:
             raise serializers.ValidationError({'password': ['Die Passwörter sind nicht identisch.']})
         if email_exists:
-            raise serializers.ValidationError({'email': ['Diese E-Mail-Adresse wird bereits verwendet.']})
+            raise serializers.ValidationError({'error': ['Bitte prüfe deine Eingaben. Email und/oder Benutzername bereits vergeben.']})
         
         account = User(email=self.validated_data['email'], username=self.validated_data['username'])
         account.set_password(pw)

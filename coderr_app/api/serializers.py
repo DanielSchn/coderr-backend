@@ -49,9 +49,14 @@ class UserProfileSerializer(serializers.ModelSerializer):
     
 
 class UserSerializer(serializers.ModelSerializer):
+    file = serializers.SerializerMethodField()
     class Meta:
         model = User
-        fields = ['pk', 'username', 'first_name', 'last_name']
+        fields = ['pk', 'username', 'first_name', 'last_name', 'file']
+
+    def get_file(self, obj):
+        user_profile = UserProfile.objects.filter(user=obj).first()
+        return user_profile.file.url if user_profile and user_profile.file else None
 
 
 class UserProfileDetailSerializer(serializers.ModelSerializer):
