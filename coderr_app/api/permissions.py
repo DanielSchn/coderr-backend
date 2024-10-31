@@ -89,6 +89,9 @@ class IsReviewerOrAdminPermission(permissions.BasePermission):
         if not request.user.is_authenticated:
             return False
         
+        if request.user.is_staff:
+            return request.method != 'POST'
+
         if request.method == 'POST':
             return request.user.user_profile.type == 'customer'
         
