@@ -4,11 +4,9 @@ class IsObjectOwnerOrAdminPermission(permissions.BasePermission):
 
     def has_object_permission(self, request, view, obj):
         if request.method in permissions.SAFE_METHODS:
-            # return bool(request.user and (request.user == obj.user or request.user.is_staff))
             return request.user and (request.user == obj.user or request.user.is_staff)
         
         if request.method == "PATCH":
-            # return bool(request.user and (request.user == obj.user or request.user.is_staff))
             return request.user and (request.user == obj.user or request.user.is_staff)
 
         return request.user and (request.user == obj.user or request.user.is_staff)
@@ -40,15 +38,8 @@ class IsBusinessOrAdminPermission(permissions.BasePermission):
         if request.method in permissions.SAFE_METHODS:
             return True
         
-        elif request.method in ['POST', 'PUT', 'PATCH', 'DELETE']:
-            if request.user.is_staff:
-                return True
-            else: 
-                
-                if request.user.user_profile.type == 'business':
-                    return True
-            
-            return False
+        if request.method in ['POST', 'PUT', 'PATCH', 'DELETE']:
+            return request.user.is_staff or request.user.user_profile.type == 'business'
         
         return False
         
