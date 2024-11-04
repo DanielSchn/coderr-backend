@@ -11,7 +11,8 @@ class OrdersTest(APITestCase):
     def setUp(self):
         self.business = User.objects.create_user(username='testuser', password='testpassword', email='test@test.de')
         self.user_profile = UserProfile.objects.create(user=self.business, email=self.business.email, type='business')
-        self.admin = User.objects.create_superuser(username='admin', password='admin')
+        self.admin = User.objects.create_superuser(username='admin', password='admin', email='admin@test.de')
+        self.user_profile_admin = UserProfile.objects.create(user=self.admin, email=self.admin.email, type='staff')
         self.customer = User.objects.create_user(username='testcustomer', password='testpassword', email='customer@test.de')
         self.user_profile_customer = UserProfile.objects.create(user=self.customer, email=self.customer.email, type='customer')
 

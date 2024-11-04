@@ -37,7 +37,7 @@ class RegistrationTest(APITestCase):
 
         response = self.client.post(url, data)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(response.data['username'], ['Dieser Benutzername ist bereits vergeben.'])
+        self.assertEqual(response.data['username'], ['Bitte prüfe deine Eingaben. Email und/oder Benutzername bereits vergeben.'])
 
 
     def test_registration_email_exists(self):
@@ -52,7 +52,7 @@ class RegistrationTest(APITestCase):
 
         response = self.client.post(url, data)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(response.data['email'], ['Diese E-Mail-Adresse wird bereits verwendet.'])
+        self.assertEqual(response.data['error'], ['Bitte prüfe deine Eingaben. Email und/oder Benutzername bereits vergeben.'])
 
     
     def test_registration_password_unequal(self):

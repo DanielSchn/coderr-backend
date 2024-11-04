@@ -92,9 +92,12 @@ class OrdersViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         user = self.request.user
-        customer_orders = Orders.objects.filter(customer_user=user)
-        business_orders = Orders.objects.filter(business_user=user)
-        return customer_orders | business_orders
+        if user.user_profile.type == 'staff':
+            return Orders.objects.all()
+        else:
+            customer_orders = Orders.objects.filter(customer_user=user)
+            business_orders = Orders.objects.filter(business_user=user)
+            return customer_orders | business_orders
 
     def perform_create(self, serializer):
         

@@ -49,7 +49,7 @@ from coderr_app.models import UserProfile
 Erstellen des Superuser. **Bitte die Angaben email, password auf die eigenen Bedürfnisse abändern!** Location, Telefon usw. kann nach Bedarf geändert werden. Zum testen kann es so belassen werden wie angegeben.
 ```
 superuser = User.objects.create_superuser(username='admin', email='admin@example.com', password='securepassword')
-user_profile = UserProfile.objects.create(user=superuser, location='Berlin', tel='1234567890', description='This is the admin profile.', working_hours='9 AM - 5 PM', type='business', email=superuser.email)
+user_profile = UserProfile.objects.create(user=superuser, location='Berlin', tel='1234567890', description='This is the admin profile.', working_hours='9 AM - 5 PM', type='staff', email=superuser.email)
 ```
 
 ## Konfiguration

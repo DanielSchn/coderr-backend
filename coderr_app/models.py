@@ -10,7 +10,8 @@ class UserProfile(models.Model):
     working_hours = models.CharField(max_length=25)
     USER_TYPE_CHOICES = [
         ('customer', 'Customer'),
-        ('business', 'Business')
+        ('business', 'Business'),
+        ('staff', 'Staff')
     ]
     type = models.CharField(max_length=25, choices=USER_TYPE_CHOICES)
     email = models.EmailField()
