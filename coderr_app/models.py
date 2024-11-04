@@ -34,6 +34,11 @@ class Offers(models.Model):
 
     def __str__(self):
         return self.title
+    
+    class Meta:
+        ordering = ['title']
+        verbose_name_plural = 'Offers'
+
 
 
 class OfferDetails(models.Model):
@@ -52,6 +57,10 @@ class OfferDetails(models.Model):
 
     def __str__(self):
         return self.title
+    
+    class Meta:
+        ordering = ['title']
+        verbose_name_plural = 'Offerdetails'
     
 
 class Orders(models.Model):
@@ -72,6 +81,10 @@ class Orders(models.Model):
     def __str__(self):
         return f'Order by {self.customer_user.username} for {self.title}'
     
+    class Meta:
+        ordering = ['title']
+        verbose_name_plural = 'Orders'
+    
 
 class Reviews(models.Model):
     customer_user = models.ForeignKey(User, related_name='customer_reviews', on_delete=models.CASCADE, limit_choices_to={'user_profile__type': 'customer'})
@@ -83,3 +96,7 @@ class Reviews(models.Model):
 
     def __str__(self):
         return f'Review for {self.business_user} by {self.customer_user}'
+    
+    class Meta:
+        ordering = ['rating']
+        verbose_name_plural = 'Reviews'
