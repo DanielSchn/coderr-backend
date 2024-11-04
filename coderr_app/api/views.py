@@ -185,3 +185,29 @@ class ReviewsViewSet(viewsets.ModelViewSet):
         instance = self.get_object()
         self.perform_destroy(instance)
         return Response({}, status.HTTP_200_OK)
+    
+
+class BaseInfoView(generics.ListAPIView):
+    queryset = UserProfile.objects.all()
+    serializer_class = UserProfile
+
+    def _calculate_average_rating(self):
+        ratings = Reviews.objects.values_list('rating', flat=True)
+        total_ratings = ratings.count()
+        if total_ratings == 0:
+            return 0
+        
+        return round(sum(ratings) / total_ratings, 1)
+
+    def list(self, request):
+        business_profile_count = UserProfile.objects.filter(type='business').count()
+        review_count = Reviews.objects.count()
+        offer_count = Offers.objects.count()
+        average_rating = self._calculate_average_rating()
+
+        return Response({
+            'business_profile_count': business_profile_count,
+            'review_count': review_count,
+            'offer_count': offer_count,
+            'average_rating': average_rating
+        })
