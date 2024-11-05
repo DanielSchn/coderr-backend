@@ -151,7 +151,7 @@ class OrdersSerializer(serializers.ModelSerializer):
     revisions = serializers.IntegerField(source='offer_details.revisions', required=False)
     delivery_time_in_days = serializers.IntegerField(source='offer_details.delivery_time_in_days', required=False)
     price = serializers.DecimalField(max_digits=10, decimal_places=2, source='offer_details.price', required=False)
-    features= serializers.JSONField(source='offer_details.fetures', required=False)
+    features= serializers.JSONField(source='offer_details.features', required=False)
     offer_type = serializers.CharField(source='offer_details.offer_type', required=False)
 
     class Meta:
