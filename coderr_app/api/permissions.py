@@ -1,6 +1,12 @@
 from rest_framework import permissions
 
 class IsObjectOwnerOrAdminPermission(permissions.BasePermission):
+    """
+    Berechtigung, die den Zugriff nur dem Eigentümer des Objekts oder einem Administrator erlaubt.
+
+    **Methoden**:
+    - **has_object_permission**: Überprüft, ob der authentifizierte Benutzer die Berechtigung hat, auf das Objekt zuzugreifen.
+    """
 
     def has_object_permission(self, request, view, obj):
         if request.method in permissions.SAFE_METHODS:
@@ -13,6 +19,13 @@ class IsObjectOwnerOrAdminPermission(permissions.BasePermission):
     
 
 class IsBusinessOrAdminPermission(permissions.BasePermission):
+    """
+    Berechtigung, die nur Geschäftsanwender und Administratoren den Zugriff auf bestimmte Endpunkte erlaubt.
+
+    **Methoden**:
+    - **has_permission**: Überprüft, ob der Benutzer die Berechtigung hat, auf die Ansicht zuzugreifen.
+    - **has_object_permission**: Überprüft, ob der Benutzer die Berechtigung hat, auf ein bestimmtes Objekt zuzugreifen.
+    """
 
     def has_permission(self, request, view):
         if request.method in permissions.SAFE_METHODS:
@@ -45,6 +58,12 @@ class IsBusinessOrAdminPermission(permissions.BasePermission):
         
 
 class IsCustomerReadOnlyPermission(permissions.BasePermission):
+    """
+    Berechtigung, die nur Lesezugriff für Kunden erlaubt.
+
+    **Methoden**:
+    - **has_permission**: Überprüft, ob der Benutzer die Berechtigung hat, auf die Ansicht zuzugreifen.
+    """
 
     def has_permission(self, request, view):
         if not request.user.is_authenticated:
@@ -60,6 +79,12 @@ class IsCustomerReadOnlyPermission(permissions.BasePermission):
     
 
 class OrderAccessPermission(permissions.BasePermission):
+    """
+    Berechtigung, die den Zugriff auf Bestellungen basierend auf dem Benutzertyp regelt.
+
+    **Methoden**:
+    - **has_permission**: Überprüft, ob der Benutzer die Berechtigung hat, auf die Ansicht zuzugreifen.
+    """
 
     def has_permission(self, request, view):
         if not request.user.is_authenticated:
@@ -81,6 +106,13 @@ class OrderAccessPermission(permissions.BasePermission):
     
 
 class IsReviewerOrAdminPermission(permissions.BasePermission):
+    """
+    Berechtigung, die den Zugriff auf Bewertungen für Rezensenten und Administratoren erlaubt.
+
+    **Methoden**:
+    - **has_permission**: Überprüft, ob der Benutzer die Berechtigung hat, auf die Ansicht zuzugreifen.
+    - **has_object_permission**: Überprüft, ob der Benutzer die Berechtigung hat, auf ein bestimmtes Objekt zuzugreifen.
+    """
 
     def has_permission(self, request, view):
         if not request.user.is_authenticated:
