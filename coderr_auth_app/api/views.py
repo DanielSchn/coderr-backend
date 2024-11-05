@@ -10,6 +10,46 @@ from rest_framework import status
 
 
 class RegistrationView(APIView):
+    """
+    Ansicht zur Benutzerregistrierung.
+
+    Diese Ansicht ermöglicht es neuen Benutzern, sich zu registrieren. 
+    Bei erfolgreicher Registrierung wird ein Token erstellt, das für 
+    die Authentifizierung in zukünftigen Anfragen verwendet werden kann.
+
+    **Erlaubte HTTP-Methoden**: 
+    - POST: Zum Erstellen eines neuen Benutzers.
+
+    **Beispiel-Request**:
+    ```json
+    {
+        "username": "neuerBenutzer",
+        "email": "benutzer@example.com",
+        "password": "sicheresPasswort"
+    }
+    ```
+
+    **Beispiel-Response (201)**:
+    ```json
+    {
+        "token": "abcdef123456...",
+        "username": "neuerBenutzer",
+        "email": "benutzer@example.com",
+        "user_id": 1
+    }
+    ```
+
+    **Beispiel-Response (400)**:
+    ```json
+    {
+        "username": ["Ein Benutzer mit diesem Namen existiert bereits."],
+        "email": ["Diese E-Mail-Adresse ist bereits in Verwendung."]
+    }
+    ```
+
+    **Zugriffsrechte**: 
+    - Jeder Benutzer kann diese Ansicht aufrufen (AllowAny).
+    """
     permission_classes = [AllowAny]
 
     def post(self, request):
@@ -31,6 +71,45 @@ class RegistrationView(APIView):
 
 
 class LoginView(ObtainAuthToken):
+    """
+    Ansicht zur Benutzeranmeldung.
+
+    Diese Ansicht ermöglicht es Benutzern, sich mit ihrem Benutzernamen 
+    und Passwort anzumelden. Bei erfolgreicher Anmeldung wird ein Token 
+    zurückgegeben, der für die Authentifizierung in zukünftigen Anfragen 
+    verwendet werden kann.
+
+    **Erlaubte HTTP-Methoden**: 
+    - POST: Zum Anmelden eines Benutzers.
+
+    **Beispiel-Request**:
+    ```json
+    {
+        "username": "bestehenderBenutzer",
+        "password": "sicheresPasswort"
+    }
+    ```
+
+    **Beispiel-Response (200)**:
+    ```json
+    {
+        "token": "abcdef123456...",
+        "username": "bestehenderBenutzer",
+        "email": "benutzer@example.com",
+        "user_id": 1
+    }
+    ```
+
+    **Beispiel-Response (400)**:
+    ```json
+    {
+        "detail": ["Falsche Anmeldedaten"]
+    }
+    ```
+
+    **Zugriffsrechte**: 
+    - Jeder Benutzer kann diese Ansicht aufrufen (AllowAny).
+    """
     permission_classes = [AllowAny]
 
     def post(self, request, *arg, **kwarg):
