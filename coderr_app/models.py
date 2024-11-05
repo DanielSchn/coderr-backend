@@ -2,6 +2,20 @@ from django.db import models
 from django.contrib.auth.models import User
 
 class UserProfile(models.Model):
+    """
+    Erweiterung des Standard-Benutzermodells für zusätzliche Informationen über den Benutzer.
+
+    Attributes:
+        user (User): Verknüpft das Benutzerprofil mit dem Django-Benutzermodell.
+        file (FileField): Optionales Profilbild des Benutzers.
+        location (str): Standort des Benutzers, max. 100 Zeichen.
+        tel (str): Telefonnummer des Benutzers, max. 25 Zeichen.
+        description (TextField): Beschreibung oder Biografie des Benutzers.
+        working_hours (str): Arbeitszeiten des Benutzers.
+        type (str): Benutzertyp, entweder 'customer', 'business' oder 'staff'.
+        email (EmailField): E-Mail-Adresse des Benutzers.
+        created_at (DateTimeField): Datum und Uhrzeit der Erstellung des Profils.
+    """
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='user_profile')
     file = models.FileField(upload_to='profile_pictures/', null=True, blank=True)
     location = models.CharField(max_length=100)
@@ -26,6 +40,17 @@ class UserProfile(models.Model):
 
 
 class Offers(models.Model):
+    """
+    Repräsentiert ein Angebot, das ein Benutzer erstellen kann.
+
+    Attributes:
+        user (User): Der Benutzer, der das Angebot erstellt hat.
+        title (str): Titel des Angebots, max. 150 Zeichen.
+        image (FileField): Optionales Bild des Angebots.
+        description (TextField): Beschreibung des Angebots.
+        created_at (DateTimeField): Erstellungsdatum des Angebots.
+        updated_at (DateTimeField): Letzte Aktualisierung des Angebots.
+    """
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='offers')
     title = models.CharField(max_length=150)
     image = models.FileField(upload_to='offers/', null=True, blank=True)
@@ -43,6 +68,18 @@ class Offers(models.Model):
 
 
 class OfferDetails(models.Model):
+    """
+    Details eines spezifischen Angebots, z. B. Preis und Typ.
+
+    Attributes:
+        offer (Offers): Referenz auf das zugehörige Angebot.
+        title (str): Titel des Angebotsdetails, max. 150 Zeichen.
+        revisions (int): Anzahl der zulässigen Überarbeitungen, Standard: -1 (unbegrenzt).
+        delivery_time_in_days (int): Lieferzeit in Tagen.
+        price (DecimalField): Preis für dieses Detailpaket.
+        features (JSONField): JSON-Daten für spezifische Merkmale oder Eigenschaften.
+        offer_type (str): Typ des Angebotsdetails, entweder 'basic', 'standard' oder 'premium'.
+    """
     offer = models.ForeignKey(Offers, on_delete=models.CASCADE, related_name='details')
     title = models.CharField(max_length=150)
     revisions = models.IntegerField(default=-1)
@@ -65,6 +102,24 @@ class OfferDetails(models.Model):
     
 
 class Orders(models.Model):
+    """
+    Repräsentiert eine Bestellung, die ein Kunde bei einem Anbieter tätigt.
+
+    Attributes:
+        customer_user (User): Der Kunde, der die Bestellung aufgibt.
+        business_user (User): Der Anbieter, bei dem die Bestellung aufgegeben wird.
+        offer (Offers): Das Angebot, das bestellt wird.
+        offer_details (OfferDetails): Details zum spezifischen Angebot.
+        title (str): Titel der Bestellung.
+        revisions (int): Anzahl der Überarbeitungen in der Bestellung.
+        delivery_time_in_days (int): Lieferzeit in Tagen.
+        price (DecimalField): Preis für die Bestellung.
+        features (JSONField): Merkmale der Bestellung im JSON-Format.
+        offer_type (str): Typ des bestellten Angebots.
+        created_at (DateTimeField): Erstellungsdatum der Bestellung.
+        updated_at (DateTimeField): Datum der letzten Aktualisierung.
+        status (str): Status der Bestellung, z. B. 'open', 'completed', etc.
+    """
     customer_user = models.ForeignKey(User, related_name='customer_order', on_delete=models.CASCADE, limit_choices_to={'user_profile__type': 'customer'})
     business_user = models.ForeignKey(User, related_name='business_order', on_delete=models.CASCADE, limit_choices_to={'user_profile__type': 'business'})
     offer = models.ForeignKey('Offers', on_delete=models.CASCADE, related_name='orders')
@@ -88,6 +143,17 @@ class Orders(models.Model):
     
 
 class Reviews(models.Model):
+    """
+    Repräsentiert eine Bewertung, die ein Kunde für ein Angebot hinterlässt.
+
+    Attributes:
+        customer_user (User): Der Kunde, der die Bewertung abgibt.
+        business_user (User): Der Anbieter, der die Bewertung erhält.
+        rating (int): Bewertungsskala, z. B. von 1 bis 5.
+        description (TextField): Kommentar zur Bewertung.
+        created_at (DateTimeField): Erstellungsdatum der Bewertung.
+        updated_at (DateTimeField): Datum der letzten Aktualisierung.
+    """
     customer_user = models.ForeignKey(User, related_name='customer_reviews', on_delete=models.CASCADE, limit_choices_to={'user_profile__type': 'customer'})
     business_user = models.ForeignKey(User, related_name='business_reviews', on_delete=models.CASCADE, limit_choices_to={'user_profile__type': 'business'})
     rating = models.IntegerField()
