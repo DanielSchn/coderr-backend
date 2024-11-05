@@ -22,6 +22,7 @@ class UserProfile(models.Model):
     
     class Meta:
         ordering = ['user__username']
+        verbose_name_plural = 'User Profiles'
 
 
 class Offers(models.Model):

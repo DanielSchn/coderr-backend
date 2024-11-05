@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     'coderr_auth_app',
     'django_filters',
     'corsheaders',
+    # 'coderr_app.apps.CoderrAppConfig',
 ]
 
 CSRF_TRUSTED_ORIGINS = [
