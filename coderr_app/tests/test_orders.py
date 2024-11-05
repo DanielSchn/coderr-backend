@@ -278,3 +278,62 @@ class OrdersTest(APITestCase):
         response_get = self.client.delete(url_delete)
         self.assertEqual(response_post.status_code, status.HTTP_201_CREATED)
         self.assertEqual(response_get.status_code, status.HTTP_204_NO_CONTENT)
+
+
+
+    def test_post_order_as_unauthorized(self):
+        url = reverse('orders-list')
+        data = {
+            "offer_detail_id": 1
+        }
+
+        self.client.credentials()
+        response = self.client.post(url, data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+
+    def test_patch_order_as_unauthorized(self):
+        url_patch = reverse('orders-detail', kwargs={'pk': 1})
+        url_post = reverse('orders-list')
+        data_post = {
+            "offer_detail_id": 1
+        }
+        data_patch = {
+            "status": "completed"
+        }
+
+        self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.customer_token.key)
+        response_post = self.client.post(url_post, data_post, format='json')
+        self.client.credentials()
+        response_patch = self.client.patch(url_patch, data_patch, format='json')
+        self.assertEqual(response_post.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(response_patch.status_code, status.HTTP_401_UNAUTHORIZED)
+
+
+    def test_get_orders_as_unauthorized(self):
+        url = reverse('orders-list')
+        data = {
+            "offer_detail_id": 1
+        }
+
+        self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.customer_token.key)
+        response_post = self.client.post(url, data, format='json')
+        self.client.credentials()
+        response_get = self.client.get(url)
+        self.assertEqual(response_post.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(response_get.status_code, status.HTTP_401_UNAUTHORIZED)
+
+
+    def test_delete_order_as_unauthorized(self):
+        url_delete = reverse('orders-detail', kwargs={'pk': 1})
+        url_post = reverse('orders-list')
+        data = {
+            "offer_detail_id": 1
+        }
+
+        self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.customer_token.key)
+        response_post = self.client.post(url_post, data, format='json')
+        self.client.credentials()
+        response_get = self.client.delete(url_delete)
+        self.assertEqual(response_post.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(response_get.status_code, status.HTTP_401_UNAUTHORIZED)
