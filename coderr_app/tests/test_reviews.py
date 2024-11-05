@@ -261,3 +261,58 @@ class ReviewTests(APITestCase):
         self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.admin_token.key)
         response_delete = self.client.delete(url_delete)
         self.assertEqual(response_delete.status_code, status.HTTP_200_OK)
+
+
+    def test_create_review_as_unauthorized(self):
+        url = reverse('reviews-list')
+        data = {
+            "rating": 5,
+            "description": "Alles Toll",
+            "business_user": 1
+        }
+
+        self.client.credentials()
+        response = self.client.post(url, data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+
+    def test_edit_review_as_unauthorized(self):
+        url_post = reverse('reviews-list')
+        url_patch = reverse('reviews-detail', kwargs={'pk': 1})
+        
+        data_post = {
+            "rating": 5,
+            "description": "Alles Toll",
+            "business_user": 1
+        }
+        data_patch = {
+            "rating": 2,
+            "description": "Ging so...",
+        }
+
+        self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.customer_token.key)
+        response_post = self.client.post(url_post, data_post, format='json')
+        self.assertEqual(response_post.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(response_post.data['description'], 'Alles Toll')
+        self.client.credentials()
+        response_patch = self.client.patch(url_patch, data_patch, format='json')
+        self.assertEqual(response_patch.status_code, status.HTTP_401_UNAUTHORIZED)
+
+
+    def test_delete_review_as_unauthorized(self):
+        url_post = reverse('reviews-list')
+        url_delete = reverse('reviews-detail', kwargs={'pk': 1})
+        
+        data = {
+            "rating": 5,
+            "description": "Alles Toll",
+            "business_user": 1
+        }
+        
+        self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.customer_token.key)
+        response_post = self.client.post(url_post, data, format='json')
+        self.assertEqual(response_post.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(response_post.data['description'], 'Alles Toll')
+        self.client.credentials()
+        response_delete = self.client.delete(url_delete)
+        self.assertEqual(response_delete.status_code, status.HTTP_401_UNAUTHORIZED)

@@ -1,11 +1,11 @@
 from rest_framework import generics, viewsets, filters, status
 from coderr_app.models import UserProfile, OfferDetails, Offers, Orders, User, Reviews
 from .serializers import UserProfileSerializer, OfferDetailsSerializer, OffersSerializer, OrdersSerializer, UserProfileDetailSerializer, ReviewsSerializer
-from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework.permissions import IsAuthenticated
 from .permissions import IsObjectOwnerOrAdminPermission, IsBusinessOrAdminPermission, IsCustomerReadOnlyPermission, OrderAccessPermission, IsReviewerOrAdminPermission
 from .paginations import LargeResultsSetPagination
-from django_filters.rest_framework import DjangoFilterBackend, FilterSet, NumberFilter
-from django.db.models import Min, Max, Subquery, OuterRef
+from django_filters.rest_framework import DjangoFilterBackend
+from django.db.models import Min, Subquery, OuterRef
 import django_filters
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -44,8 +44,7 @@ class OfferFilter(django_filters.FilterSet):
 
     def filter_by_max_delivery_time(self, queryset, name, value):
         return queryset.filter(max_delivery_time__lte=value)
-    
-    
+     
 
 class OffersViewSet(viewsets.ModelViewSet):
     permission_classes = [IsBusinessOrAdminPermission]

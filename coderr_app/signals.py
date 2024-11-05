@@ -1,9 +1,37 @@
 from django.db import transaction
+from django.conf import settings
 from django.contrib.auth import get_user_model
 from .models import UserProfile
 
 @transaction.atomic
 def create_guest_accounts(sender, **kwargs):
+    """
+    Erstellt Gastbenutzerkonten, falls diese noch nicht existieren.
+
+    Diese Funktion wird normalerweise von einem Signal aufgerufen, um sicherzustellen,
+    dass bestimmte Gastbenutzerkonten automatisch erstellt werden, wenn das System
+    gestartet wird. Die Funktion überprüft, ob die Benutzer mit den Benutzernamen 
+    'andrey' und 'kevin' bereits existieren. Wenn nicht, werden sie mit vordefinierten 
+    Daten erstellt und ein entsprechendes Benutzerprofil wird angelegt.
+
+    Die Funktion wird nur ausgeführt, wenn die Anwendung nicht im TESTING-Modus läuft.
+
+    Args:
+        sender: Das sendende Signal, normalerweise das Modell, das das Signal auslöst.
+        **kwargs: Zusätzliche Schlüsselwortargumente, die an das Signal übergeben werden.
+
+    Returns:
+        None: Diese Funktion gibt keinen Wert zurück. Sie hat jedoch Seiteneffekte, 
+        indem sie Benutzerkonten erstellt und in der Datenbank speichert.
+
+    Side Effects:
+        - Erstellt zwei Gastbenutzerkonten in der Datenbank (Andrey und Kevin),
+          sofern diese nicht bereits vorhanden sind.
+        - Erstellt entsprechende Benutzerprofile für die Gastbenutzer.
+    """
+    if settings.TESTING:
+        return
+
     User = get_user_model()
 
     if not User.objects.filter(username='andrey').exists():
