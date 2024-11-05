@@ -34,6 +34,14 @@ def create_guest_accounts(sender, **kwargs):
 
     User = get_user_model()
 
+    for username in ['andrey', 'kevin']:
+        try:
+            user = User.objects.get(username=username)
+            user.delete()
+            print(f'Guestuser deleted: {username}')
+        except User.DoesNotExist:
+            print(f'Guestuser not found: {username}')
+
     if not User.objects.filter(username='andrey').exists():
         customer = User.objects.create_user(
             username='andrey',
