@@ -8,5 +8,9 @@ class CoderrAppConfig(AppConfig):
 
 
     def ready(self):
+        """
+        Registriert das `create_guest_accounts` Signal mit dem `post_migrate` Ereignis,
+        sodass nach jeder Migration automatisch Gast-Accounts erstellt werden.
+        """
         from .signals import create_guest_accounts
         post_migrate.connect(create_guest_accounts, sender=self)

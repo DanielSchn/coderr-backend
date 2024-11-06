@@ -28,3 +28,25 @@ urlpatterns = [
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+
+"""
+URLs der API:
+
+### Admin
+
+- **GET /admin/**: Zugriff auf das Django Admin-Interface für die Verwaltung der Anwendung.
+
+### Authentifizierung
+
+- **POST /api/login/**: Authentifiziert einen Benutzer und gibt ein Authentifizierungstoken zurück.
+- **POST /api/registration/**: Registriert einen neuen Benutzer und erstellt dessen Profil.
+
+### API-Module
+
+- **/api/**: Basisroute für alle API-Endpunkte der Anwendung. Weitere spezifische Endpunkte wie Benutzerprofile, Angebote, Bestellungen und Bewertungen sind unter dieser Route verfügbar (definiert in `coderr_app.api.urls`).
+
+### Medien
+
+- **/media/**: Dynamische Route für den Zugriff auf Medien-Dateien, die in der Anwendung hochgeladen wurden (z.B. Profilbilder).
+"""
