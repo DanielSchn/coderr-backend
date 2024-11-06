@@ -1,6 +1,8 @@
 from django.contrib.auth.models import User
 from coderr_app.models import UserProfile, Offers, OfferDetails, Orders, Reviews
 
+# Am besten in Blöcken und nicht alles auf einmal. Blöcke sind bereits definiert.
+
 admin_user = User.objects.create_superuser(username='admin', password='admin', email='admin@test.de', first_name='admin', last_name='admin')
 UserProfile.objects.create(user=admin_user, email=admin_user.email, type='staff')
 business_user1 = User.objects.create_user(username='anton', password='password1', email='anton@business.de', first_name='Anton', last_name='Nachname')
@@ -9,6 +11,8 @@ business_user2 = User.objects.create_user(username='anke', password='password2',
 UserProfile.objects.create(user=business_user2, email=business_user2.email, type='business')
 business_user3 = User.objects.create_user(username='fred', password='password3', email='fred@business.de', first_name='Fred', last_name='Nachname')
 UserProfile.objects.create(user=business_user3, email=business_user3.email, type='business')
+
+
 customer_user1 = User.objects.create_user(username='heike', password='password4', email='heike@customer.de', first_name='Heike', last_name='Nachname')
 UserProfile.objects.create(user=customer_user1, email=customer_user1.email, type='customer')
 customer_user2 = User.objects.create_user(username='tom', password='password5', email='tom@customer.de', first_name='Tom', last_name='Nachname')
@@ -17,8 +21,8 @@ customer_user3 = User.objects.create_user(username='mia', password='password6', 
 UserProfile.objects.create(user=customer_user3, email=customer_user3.email, type='customer')
 customer_user4 = User.objects.create_user(username='lars', password='password7', email='lars@customer.de', first_name='Lars', last_name='Nachname')
 UserProfile.objects.create(user=customer_user4, email=customer_user4.email, type='customer')
-customer_user5 = User.objects.create_user(username='lara', password='password8', email='lara@customer.de', first_name='Lara', last_name='Nachname')
-UserProfile.objects.create(user=customer_user5, email=customer_user5.email, type='customer')
+
+
 offer1 = Offers.objects.create(user=business_user1, title='Webdesign Paket', description='Professionelles Webdesign für kleine Unternehmen.')
 OfferDetails.objects.create(offer=offer1, title='Basis Webdesign', revisions=2, delivery_time_in_days=5, price=150.00, features=["Responsive Design", "SEO-Optimierung"], offer_type='basic')
 OfferDetails.objects.create(offer=offer1, title='Erweitertes Webdesign', revisions=5, delivery_time_in_days=10, price=300.00, features=["Responsive Design", "SEO-Optimierung", "Kontaktformular"], offer_type='standard')
@@ -43,6 +47,12 @@ offer6 = Offers.objects.create(user=business_user3, title='Video Editing Paket',
 OfferDetails.objects.create(offer=offer6, title='Standard Editing', revisions=2, delivery_time_in_days=5, price=150.00, features=["Videoschnitt", "Übergänge"], offer_type='basic')
 OfferDetails.objects.create(offer=offer6, title='Erweitertes Editing', revisions=4, delivery_time_in_days=10, price=300.00, features=["Videoschnitt", "Übergänge", "Effekte", "Farbkorrektur"], offer_type='standard')
 OfferDetails.objects.create(offer=offer6, title='Komplettes Editing', revisions=6, delivery_time_in_days=15, price=500.00, features=["Videoschnitt", "Übergänge", "Effekte", "Farbkorrektur", "Sound Design"], offer_type='premium')
+offer7 = Offers.objects.create(user=business_user3, title='App-Entwicklungs Paket', description='Individuelle App-Entwicklung für iOS und Android.')
+OfferDetails.objects.create(offer=offer7, title='Basic App', revisions=1, delivery_time_in_days=10, price=500.00, features=["Startseite", "Benutzerauthentifizierung"], offer_type='basic')
+OfferDetails.objects.create(offer=offer7, title='Erweiterte App', revisions=3, delivery_time_in_days=20, price=1000.00, features=["Startseite", "Benutzerauthentifizierung", "Datenbankanbindung", "Push-Benachrichtigungen"], offer_type='standard')
+OfferDetails.objects.create(offer=offer7, title='Komplette App', revisions=5, delivery_time_in_days=30, price=2000.00, features=["Startseite", "Benutzerauthentifizierung", "Datenbankanbindung", "Push-Benachrichtigungen", "Multiplattform (iOS und Android)", "In-App Käufe", "Admin Panel"], offer_type='premium')
+
+
 Orders.objects.create(customer_user=customer_user1, business_user=business_user1, offer=offer1, offer_details=OfferDetails.objects.get(offer=offer1, offer_type='basic'), title='Bestellung 1 von Heike', revisions=2, delivery_time_in_days=5, price=150.00, features=["Responsive Design", "SEO-Optimierung"], offer_type='basic', status='completed')
 Orders.objects.create(customer_user=customer_user1, business_user=business_user1, offer=offer2, offer_details=OfferDetails.objects.get(offer=offer2, offer_type='standard'), title='Bestellung 2 von Heike', revisions=5, delivery_time_in_days=10, price=300.00, features=["Responsive Design", "SEO-Optimierung", "Kontaktformular"], offer_type='standard', status='in_progress')
 Orders.objects.create(customer_user=customer_user2, business_user=business_user2, offer=offer3, offer_details=OfferDetails.objects.get(offer=offer3, offer_type='basic'), title='Bestellung 1 von Tom', revisions=2, delivery_time_in_days=3, price=200.00, features=["Event Fotoshooting", "30 Bilder"], offer_type='basic', status='in_progress')
@@ -50,7 +60,9 @@ Orders.objects.create(customer_user=customer_user2, business_user=business_user2
 Orders.objects.create(customer_user=customer_user3, business_user=business_user3, offer=offer5, offer_details=OfferDetails.objects.get(offer=offer5, offer_type='basic'), title='Bestellung 1 von Mia', revisions=1, delivery_time_in_days=7, price=100.00, features=["Keyword Recherche", "On-Page SEO"], offer_type='basic', status='in_progress')
 Orders.objects.create(customer_user=customer_user3, business_user=business_user3, offer=offer6, offer_details=OfferDetails.objects.get(offer=offer6, offer_type='standard'), title='Bestellung 2 von Mia', revisions=4, delivery_time_in_days=10, price=300.00, features=["Videoschnitt", "Übergänge", "Effekte", "Farbkorrektur"], offer_type='standard', status='completed')
 Orders.objects.create(customer_user=customer_user4, business_user=business_user1, offer=offer1, offer_details=OfferDetails.objects.get(offer=offer1, offer_type='premium'), title='Bestellung 1 von Lars', revisions=10, delivery_time_in_days=15, price=500.00, features=["Responsive Design", "SEO-Optimierung", "Kontaktformular", "SEO-Analyse"], offer_type='premium', status='in_progress')
-Orders.objects.create(customer_user=customer_user5, business_user=business_user2, offer=offer3, offer_details=OfferDetails.objects.get(offer=offer3, offer_type='premium'), title='Bestellung 1 von Lara', revisions=10, delivery_time_in_days=10, price=800.00, features=["Event Fotoshooting", "100 Bilder", "Nachbearbeitung", "Fotoalbum"], offer_type='premium', status='cancelled')
+Orders.objects.create(customer_user=customer_user1, business_user=business_user2, offer=offer3, offer_details=OfferDetails.objects.get(offer=offer3, offer_type='premium'), title='Bestellung 1 von Lara', revisions=10, delivery_time_in_days=10, price=800.00, features=["Event Fotoshooting", "100 Bilder", "Nachbearbeitung", "Fotoalbum"], offer_type='premium', status='cancelled')
+
+
 Reviews.objects.create(customer_user=customer_user1, business_user=business_user1, rating=5, description="Ausgezeichnete Arbeit! Ich bin sehr zufrieden.")
 Reviews.objects.create(customer_user=customer_user1, business_user=business_user2, rating=4, description="Sehr professionell, kann ich nur empfehlen.")
 Reviews.objects.create(customer_user=customer_user1, business_user=business_user3, rating=3, description="Gute Qualität, aber es gibt noch Raum für Verbesserungen.")
@@ -63,6 +75,3 @@ Reviews.objects.create(customer_user=customer_user3, business_user=business_user
 Reviews.objects.create(customer_user=customer_user4, business_user=business_user1, rating=4, description="Gute Qualität, aber es gibt noch Raum für Verbesserungen.")
 Reviews.objects.create(customer_user=customer_user4, business_user=business_user2, rating=5, description="Ich würde auf jeden Fall wieder hier kaufen!")
 Reviews.objects.create(customer_user=customer_user4, business_user=business_user3, rating=3, description="Die Ergebnisse waren nicht wie erwartet.")
-Reviews.objects.create(customer_user=customer_user5, business_user=business_user1, rating=2, description="Ich war nicht ganz zufrieden mit dem Service.")
-Reviews.objects.create(customer_user=customer_user5, business_user=business_user2, rating=3, description="Ich habe viel gelernt, danke für die Hilfe!")
-Reviews.objects.create(customer_user=customer_user5, business_user=business_user3, rating=4, description="Tolle Erfahrung, ich bin begeistert!")
