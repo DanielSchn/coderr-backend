@@ -91,14 +91,14 @@ Diese Einstellungen ermöglichen 'Permissions' und die 'Authentication'.
 ## Nutzung
 Nachdem der Server läuft, kannst du die API verwenden, um mit dem Coderr Frontend zu arbeiten. Hier einige nützliche Befehle:
 
-- Starte den Entwicklungsserver:
-```
-python manage.py runserver
-```
 - Migriere die Datenbank:
 ```
 python manage.py makemigrations
 python manage.py migrate
+```
+- Starte den Entwicklungsserver:
+```
+python manage.py runserver
 ```
 
 ## Deployment
