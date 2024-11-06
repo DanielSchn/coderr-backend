@@ -2,7 +2,8 @@
 
 Coderr ist eine Freelancer Plattform für Softwareentwickler.\
 Das Frontend ist hier zu finden:
-`https://github.com/DanielSchn/coderr-frontend`
+`https://github.com/DanielSchn/coderr-frontend`\
+Genutzte Version: 1.0
 
 ## Funktionen
 - Registrierung und Login als Business oder Customer User.
