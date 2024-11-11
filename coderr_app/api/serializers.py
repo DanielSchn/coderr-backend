@@ -129,6 +129,32 @@ class UserProfileDetailSerializer(serializers.ModelSerializer):
         return representation
     
 
+class CustomerProfileDetailSerializer(UserProfileDetailSerializer):
+    """
+    Serializer für Kundenprofile, der das `created_at`-Feld als `uploaded_at` zurückgibt.
+
+    Meta:
+        model (UserProfile): Modell des Kundenprofils.
+        fields (list): Felder des Kundenprofils, inklusive `user`, `file`, `type`, und `created_at`.
+
+    Methods:
+        to_representation(instance): Passt die Darstellung an, um `created_at` in `uploaded_at` umzubenennen.
+    """
+    class Meta:
+        model = UserProfile
+        fields = ['user', 'file', 'created_at', 'type']
+
+    def to_representation(self, instance):
+        """
+        Überschreibt die Standarddarstellung, um `created_at` als `uploaded_at` zurückzugeben.
+        """
+        representation = super().to_representation(instance)
+
+        representation['uploaded_at'] = representation.pop('created_at')
+        
+        return representation
+    
+
 class OfferDetailsSerializer(serializers.ModelSerializer):
     """
     Serializer für das OfferDetails-Modell, das Details und den Link zu einzelnen Angebotsdetails bereitstellt.
@@ -147,6 +173,8 @@ class OfferDetailsSerializer(serializers.ModelSerializer):
         """
         representation = super().to_representation(instance)
         representation['url'] = f'/offerdetails/{instance.id}/'
+
+        representation['price'] = float(instance.price)
         
         return representation
     

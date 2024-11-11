@@ -61,5 +61,5 @@ def create_guest_accounts(sender, **kwargs):
             first_name='Kevin',
             last_name='Businessguest'
         )
-        UserProfile.objects.create(user=business, email=business.email, type='business')
+        UserProfile.objects.create(user=business, email=business.email, type='business', tel='49123456789', working_hours='9-17', description='Test Business User Developer', location='Testlocation')
         print(f'Business Guestuser created: {business}')

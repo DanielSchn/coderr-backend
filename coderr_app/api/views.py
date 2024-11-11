@@ -1,6 +1,6 @@
 from rest_framework import generics, viewsets, filters, status
 from coderr_app.models import UserProfile, OfferDetails, Offers, Orders, User, Reviews
-from .serializers import UserProfileSerializer, OfferDetailsSerializer, OffersSerializer, OrdersSerializer, UserProfileDetailSerializer, ReviewsSerializer
+from .serializers import UserProfileSerializer, OfferDetailsSerializer, OffersSerializer, OrdersSerializer, UserProfileDetailSerializer, ReviewsSerializer, CustomerProfileDetailSerializer
 from rest_framework.permissions import IsAuthenticated
 from .permissions import IsObjectOwnerOrAdminPermission, IsBusinessOrAdminPermission, IsCustomerReadOnlyPermission, OrderAccessPermission, IsReviewerOrAdminPermission
 from .paginations import LargeResultsSetPagination
@@ -67,7 +67,7 @@ class CustomerProfilesViewSet(viewsets.ModelViewSet):
     - Erfordert Authentifizierung.
     """
     permission_classes = [IsAuthenticated]
-    serializer_class = UserProfileDetailSerializer
+    serializer_class = CustomerProfileDetailSerializer
 
     def get_queryset(self):
         """
@@ -350,7 +350,7 @@ class ReviewsViewSet(viewsets.ModelViewSet):
         """
         instance = self.get_object()
         self.perform_destroy(instance)
-        return Response({}, status.HTTP_200_OK)
+        return Response(status=status.HTTP_204_NO_CONTENT)
     
 
 class BaseInfoView(generics.ListAPIView):

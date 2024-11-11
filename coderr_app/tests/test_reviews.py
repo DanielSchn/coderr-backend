@@ -220,7 +220,7 @@ class ReviewTests(APITestCase):
         self.assertEqual(response_post.status_code, status.HTTP_201_CREATED)
         self.assertEqual(response_post.data['description'], 'Alles Toll')
         response_delete = self.client.delete(url_delete)
-        self.assertEqual(response_delete.status_code, status.HTTP_200_OK)
+        self.assertEqual(response_delete.status_code, status.HTTP_204_NO_CONTENT)
 
 
     def test_delete_review_as_business(self):
@@ -260,7 +260,7 @@ class ReviewTests(APITestCase):
         self.client.credentials()
         self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.admin_token.key)
         response_delete = self.client.delete(url_delete)
-        self.assertEqual(response_delete.status_code, status.HTTP_200_OK)
+        self.assertEqual(response_delete.status_code, status.HTTP_204_NO_CONTENT)
 
 
     def test_create_review_as_unauthorized(self):
