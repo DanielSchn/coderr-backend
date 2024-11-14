@@ -58,14 +58,14 @@ INSTALLED_APPS = [
 CSRF_TRUSTED_ORIGINS = [
     #'http://127.0.0.1:5500',
     #'http://localhost:5500'
-    'http://coder.dschneider-dev.de',
+    'http://coderr.dschneider-dev.de',
     'https://coderr.dschneider-dev.de'
 ]
 
 CORS_ALLOWED_ORIGINS = [
     #'http://127.0.0.1:5500',
     #'http://localhost:5500',
-    'http://coder.dschneider-dev.de',
+    'http://coderr.dschneider-dev.de',
     'https://coderr.dschneider-dev.de'
 ]
 
