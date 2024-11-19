@@ -144,16 +144,6 @@ class CustomerProfileDetailSerializer(UserProfileDetailSerializer):
         model = UserProfile
         fields = ['user', 'file', 'created_at', 'type']
 
-    def to_representation(self, instance):
-        """
-        Überschreibt die Standarddarstellung, um `created_at` als `uploaded_at` zurückzugeben.
-        """
-        representation = super().to_representation(instance)
-
-        representation['uploaded_at'] = representation.pop('created_at')
-        
-        return representation
-    
 
 class OfferDetailsSerializer(serializers.ModelSerializer):
     """
