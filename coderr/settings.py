@@ -29,9 +29,10 @@ TESTING = 'test' in sys.argv
 SECRET_KEY = 'django-insecure-99y)@ocf=1m-=^@^2(n9b-qze$ilu3s*j@ul0$l**n$=$i19qv'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = [
+    'localhost',
     '127.0.0.1',
     '34.13.160.170',
     'coderr.schneider-remote.de',
@@ -56,15 +57,15 @@ INSTALLED_APPS = [
 ]
 
 CSRF_TRUSTED_ORIGINS = [
-    #'http://127.0.0.1:5500',
-    #'http://localhost:5500'
+    'http://127.0.0.1:5500',
+    'http://localhost:5500'
     'http://coderr.dschneider-dev.de',
     'https://coderr.dschneider-dev.de'
 ]
 
 CORS_ALLOWED_ORIGINS = [
-    #'http://127.0.0.1:5500',
-    #'http://localhost:5500',
+    'http://127.0.0.1:5500',
+    'http://localhost:5500',
     'http://coderr.dschneider-dev.de',
     'https://coderr.dschneider-dev.de'
 ]
